@@ -9,5 +9,4 @@ object Versioned {
 
   def apply[Origin, V <: Nat, D]: Versioned.Aux[Origin, V, D] = new Versioned[Origin, V] {type Data = D}
 
-  implicit def version0[Origin]: Versioned[Origin, _0] = null
 }
