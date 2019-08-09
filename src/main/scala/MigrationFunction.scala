@@ -10,9 +10,6 @@ object MigrationFunction {
     def apply(d: Data1): Data2 = f(d)
   }
 
-  implicit def identity[Data]: MigrationFunction[Data, Data] = new MigrationFunction[Data, Data] {
-    def apply(d: Data): Data = d
-  }
 }
 
 trait MigrationVersionFunction[Origin, From <: Nat] {
