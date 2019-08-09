@@ -1,9 +1,13 @@
 import shapeless.{Nat, _0}
 
-trait Versioned[Origin, Data, V <: Nat]
+trait Versioned[Origin, V <: Nat] {
+  type Data
+}
 
 object Versioned {
-  def apply[Origin, Data, V <: Nat]: Versioned[Origin, Data, V] = null
+  type Aux[Origin, V <: Nat, Data0] = Versioned[Origin, V]{ type Data = Data0 }
 
-  implicit def version0[Origin]: Versioned[Origin, Origin, _0] = null
+  def apply[Origin, V <: Nat, D]: Versioned.Aux[Origin, V, D] = new Versioned[Origin, V] {type Data = D}
+
+  implicit def version0[Origin]: Versioned[Origin, _0] = null
 }
