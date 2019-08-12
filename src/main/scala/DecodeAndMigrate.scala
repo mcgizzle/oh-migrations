@@ -27,24 +27,21 @@ trait DecodeAndMigrateBuilder[Origin, A, Start <: Nat, Target <: Nat] {
 
 }
 
-object DecodeAndMigrateBuilder extends LowPriority {
+object DecodeAndMigrateBuilder  {
 
   type Aux[Origin, A, Start <: Nat, Target <: Nat, Out0] = DecodeAndMigrateBuilder[Origin, A, Start, Target] { type Out = Out0 }
 
-  implicit def decodeOrRecurse[Origin, A, N <: Nat, Target <: Nat, D, DTarget]
+  implicit def recurse[Origin, A, N <: Nat, Target <: Nat, D, DTarget]
   (implicit
    v: Versioned.Aux[Origin, N, D],
-   r: Lazy[DecodeAndMigrateBuilder.Aux[Origin, A, Succ[N], Target, DTarget]],
    ev: Decoder[A, D],
    m: MigrationBuilder.Aux[Origin, N, Target, D, DTarget],
+   r: Lazy[DecodeAndMigrateBuilder.Aux[Origin, A, Succ[N], Target, DTarget]],
   ): DecodeAndMigrateBuilder.Aux[Origin, A, N, Target, DTarget] =
     new DecodeAndMigrateBuilder[Origin, A, N, Target] {
       type Out = DTarget
       def decodeAndMigrate(a: A): Option[DTarget] = r.value.decodeAndMigrate(a) <+> m.migrateOption(ev.decode(a))
     }
-}
-
-trait LowPriority {
 
   implicit def base[Origin, A, N <: Nat, DN]
   (implicit
