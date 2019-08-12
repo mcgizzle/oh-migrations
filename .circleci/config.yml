@@ -21,8 +21,9 @@ jobs:
 
       - save_cache:
           paths:
+            - ~/.ivy2
             - ~/.m2
           key: deps
 
       # run tests!
-      - run: cat /dev/null | sbt test:test
+      - run: sbt test
