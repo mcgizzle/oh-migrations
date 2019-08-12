@@ -2,7 +2,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import shapeless.Nat._
 import shapeless.test.illTyped
 
-class MigrationTests extends FlatSpec with Matchers {
+class MigrateTests extends FlatSpec with Matchers {
 
   case class UserV1(name: String, age: Int)
   case class Name(value: String)

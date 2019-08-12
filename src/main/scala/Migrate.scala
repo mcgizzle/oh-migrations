@@ -16,10 +16,11 @@ trait MigrationBuilder[Origin, Start <: Nat, End <: Nat] {
   type Data2
 
   def migrate(d: Data1): Data2
+  def migrateOption(d: Option[Data1]): Option[Data2] = d.map(migrate(_))
 
 }
 
-object MigrationBuilder extends LowPriority {
+object MigrationBuilder  {
 
   type Aux[Origin, Start <: Nat, End <: Nat, D1, D2] = MigrationBuilder[Origin, Start, End] {
     type Data1 = D1
@@ -40,8 +41,6 @@ object MigrationBuilder extends LowPriority {
     def migrate(d: DStart): Data2 = r.value.migrate(f.apply(d))
   }
 
-}
-trait LowPriority {
   implicit def base[Origin, V <: Nat, D, DNext]
   (implicit
    v: Versioned.Aux[Origin, V, D],
@@ -53,7 +52,6 @@ trait LowPriority {
   }
 }
 
-object LowPriority extends LowPriority
 
 
 

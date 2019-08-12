@@ -1,61 +1,45 @@
+import shapeless.{Nat, Succ}
 import shapeless.ops.nat.Pred
-import shapeless.{Lazy, Nat, Succ}
+import cats.Alternative
+import cats.implicits._
 
 trait Decoder[A, B] {
 
-  def from(b: B): Option[A]
+  def from(a: A): Option[B]
 
 }
 
-object Replae {
-
-  def base[A, B](b: B)(ev: Decoder[A, B]) = ev.from(b)
-
-  def recurse[Origin, Current, Next, Start, B](b: B)(ev: MigrationBuilder[Origin, Start, End]) = null
-
+class DecodeAndMigrate[Origin] {
+  def decode[A, Start <: Nat, Target <: Nat, TargetD](a: A)(implicit ev: DecodeAndMigrateBuilder[Origin, A, Start, Target, TargetD]): Option[TargetD] = ev.decodeAndMigrate(a)
 }
-trait DecodeAndMigrateBuilder[Origin, Start <: Nat, End <: Nat] {
 
-  type Data1
-  type Data2
+object DecodeAndMigrate {
+  def apply[Origin]: DecodeAndMigrate[Origin] = new DecodeAndMigrate[Origin]
+}
 
-  def decodeAndMigrate(d: Data1): Data2
+trait DecodeAndMigrateBuilder[Origin, A, Start <: Nat, Target <: Nat, TargetD] {
+
+  def decodeAndMigrate(a: A): Option[TargetD]
 
 }
 
-object MigrationBuilder extends LowPriority {
+object DecodeAndMigrateBuilder {
 
-  type Aux[Origin, Start <: Nat, End <: Nat, D1, D2] = MigrationBuilder[Origin, Start, End] {
-    type Data1 = D1
-    type Data2 = D2
+  def decode[Origin, A, Start <: Nat, Target <: Nat, TargetD](a: A)(implicit m: DecodeAndMigrateBuilder[Origin, A, Start, Target, TargetD]): Option[TargetD] = m.decodeAndMigrate(a)
+
+  implicit def base[Origin, A, Target <: Nat, D](a: A)(implicit ev: Decoder[A, D]): DecodeAndMigrateBuilder[Origin, A, Target, Target, D] =
+    new DecodeAndMigrateBuilder[Origin,A, Target, Target, D] {
+      def decodeAndMigrate(a: A): Option[D] = ev.from(a)
   }
 
-  implicit def recurse[Origin, Start <: Nat, Current <: Nat, Prev <: Nat, DCurrent, DPrev, DStart]
-  (implicit
-   ev: Pred.Aux[Current, Prev],
-   v1: Versioned.Aux[Origin, Start, DStart],
-   v2: Versioned.Aux[Origin, Prev, DPrev],
-   v3: Versioned.Aux[Origin, Current, DCurrent],
-   f: MigrationFunction[DPrev, DCurrent],
-   r: Lazy[MigrationBuilder.Aux[Origin, Start, Prev, DStart, DPrev]],
-  ): MigrationBuilder.Aux[Origin, Start, Current, DStart, DCurrent] = new MigrationBuilder[Origin, Start, Current] {
-    type Data1 = DPrev
-    type Data2 = DCurrent
+  implicit def decodeOrRecurse[Origin, A, N <: Nat, Target <: Nat, D, TargetD](a: A)
+  (implicit ev: Decoder[A, D],
+   m: MigrationBuilder.Aux[Origin, N, Target, D, TargetD],
+   r: DecodeAndMigrateBuilder[Origin, A, Succ[N], Target, TargetD]): DecodeAndMigrateBuilder[Origin, A, N, Target, TargetD] =
+    new DecodeAndMigrateBuilder[Origin, A,  N, Target, TargetD] {
+      def decodeAndMigrate(a: A): Option[TargetD] = r.decodeAndMigrate(a) <+> m.migrateOption(ev.from(a))
+    }
 
-    def migrate(d: DPrev): DCurrent = r.value.migrate(f.apply(d))
-  }
-
-  implicit def base[Origin, V <: Nat, Prev <: Nat, D, DPrev]
-  (implicit
-   ev: Pred.Aux[V, Prev],
-   v: Versioned.Aux[Origin, V, D],
-   v1: Versioned.Aux[Origin, Prev, DPrev],
-   e: Decoder
-   f: MigrationFunction[DPrev, D]): MigrationBuilder.Aux[Origin, Prev, V, DPrev, D] = new MigrationBuilder[Origin, Prev, V] {
-    type Data1 = DPrev
-    type Data2 = D
-    def migrate(d: DPrev): D = f.apply(d)
-  }
 }
 
 
