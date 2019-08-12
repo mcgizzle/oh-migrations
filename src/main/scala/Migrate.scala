@@ -20,7 +20,7 @@ trait MigrationBuilder[Origin, Start <: Nat, End <: Nat] {
 
 }
 
-object MigrationBuilder  {
+object MigrationBuilder {
 
   type Aux[Origin, Start <: Nat, End <: Nat, D1, D2] = MigrationBuilder[Origin, Start, End] {
     type Data1 = D1
@@ -40,7 +40,6 @@ object MigrationBuilder  {
 
     def migrate(d: DStart): Data2 = r.value.migrate(f.apply(d))
   }
-
   implicit def base[Origin, V <: Nat, D, DNext]
   (implicit
    v: Versioned.Aux[Origin, V, D],
