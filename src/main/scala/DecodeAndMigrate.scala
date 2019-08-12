@@ -31,13 +31,12 @@ object DecodeAndMigrateBuilder {
 
   type Aux[Origin, A, Start <: Nat, Target <: Nat, Out0] = DecodeAndMigrateBuilder[Origin, A, Start, Target] { type Out = Out0 }
 
-  implicit def base[Origin, A, N <: Nat, DN, DTarget](a: A)
-  (implicit dn: Decoder[A, DN],
-   dTarget: Decoder[A, DTarget],
-   m: MigrationBuilder.Aux[Origin, N, Succ[N], DN, DTarget]): DecodeAndMigrateBuilder.Aux[Origin, A, N, Succ[N], DTarget] =
-    new DecodeAndMigrateBuilder[Origin, A, N, Succ[N]] {
-      type Out = DTarget
-      def decodeAndMigrate(a: A): Option[DTarget] = dTarget.decode(a) <+> m.migrateOption(dn.decode(a))
+  implicit def base[Origin, A, N <: Nat, DN](a: A)
+  (implicit
+   d: Decoder[A, DN]): DecodeAndMigrateBuilder.Aux[Origin, A, N, N, DN] =
+    new DecodeAndMigrateBuilder[Origin, A, N, N] {
+      type Out = DN
+      def decodeAndMigrate(a: A): Option[DN] = d.decode(a)
   }
 
   implicit def decodeOrRecurse[Origin, A, N <: Nat, Target <: Nat, D, DTarget](a: A)
