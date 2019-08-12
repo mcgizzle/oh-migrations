@@ -11,16 +11,3 @@ object MigrationFunction {
   }
 
 }
-
-trait MigrationVersionFunction[Origin, From <: Nat] {
-  def apply(d: Versioned[Origin, From]): Versioned[Origin, Succ[From]]
-}
-
-object MigrationVersionFunction {
-
-  def apply[Origin, From <: Nat](f: Versioned[Origin, From] => Versioned[Origin, Succ[From]]): MigrationVersionFunction[Origin, From] =
-    new MigrationVersionFunction[Origin, From] {
-      def apply(d: Versioned[Origin, From]): Versioned[Origin, Succ[From]] = f(d)
-  }
-
-}
