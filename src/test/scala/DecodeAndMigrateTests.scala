@@ -22,14 +22,10 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
 
   "DecodeAndMigrate" should "choose the latest decoder" in {
 
-    implicit val d1: Decoder[A, UserV1] = Decoder.from(_ => Some(UserV1("")))
-    implicit val d2: Decoder[A, UserV2] = Decoder.from(_ => Some(UserV2("decoded", Some("red"))))
+    implicit val d1: Decoder[A, UserV1] = Decoder.from[A, UserV1](_ => Some(UserV1("")))
+    implicit val d2: Decoder[A, UserV2] = Decoder.from[A, UserV2](_ => Some(UserV2("decoded", Some("red"))))
 
-
-    implicit val y0 = DecodeAndMigrateBuilder.base[User, A, _2, UserV2](producerOfAs)
-    implicit val y1 = DecodeAndMigrateBuilder.decodeOrRecurse[User, A, _1, _2, UserV1, UserV2](producerOfAs)
-
-    DecodeAndMigrate[User].decode[A, _1, _2](producerOfAs) shouldBe Some(UserV2("decoded", Some("red")))
+    DecodeAndMigrate[User].from[A, _1, _2](producerOfAs) shouldBe Some(UserV2("decoded", Some("red")))
 
   }
   it should "migrate from earlier decoder" in {
@@ -37,10 +33,7 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
     implicit val d1: Decoder[A, UserV1] = Decoder.from(_ => Some(UserV1("User1")))
     implicit val d2: Decoder[A, UserV2] = Decoder.from(_ => None)
 
-    implicit val y0 = DecodeAndMigrateBuilder.base[User, A, _2, UserV2](producerOfAs)
-    implicit val y1 = DecodeAndMigrateBuilder.decodeOrRecurse[User, A, _1, _2, UserV1, UserV2](producerOfAs)
-
-    DecodeAndMigrate[User].decode[A, _1, _2](producerOfAs) shouldBe Some(UserV2("User1", None))
+    DecodeAndMigrate[User].from[A, _1, _2](producerOfAs) shouldBe Some(UserV2("User1", None))
   }
   it should "choose latest and then migrate" in {
 
@@ -50,10 +43,6 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
     implicit val d2: Decoder[A, UserV2] = Decoder.from(_ => Some(UserV2("I choose V2!", None)))
     implicit val d3: Decoder[A, UserV3] = Decoder.from(_ => None)
 
-    implicit val y0 = DecodeAndMigrateBuilder.base[User, A, _3, UserV3](producerOfAs)
-    implicit val y1 = DecodeAndMigrateBuilder.decodeOrRecurse[User, A, _2, _3, UserV2, UserV3](producerOfAs)
-    implicit val y2 = DecodeAndMigrateBuilder.decodeOrRecurse[User, A, _1, _3, UserV1, UserV3](producerOfAs)
-
-    DecodeAndMigrate[User].decode[A, _1, _3](producerOfAs) shouldBe Some(UserV3("I choose V2!", Some("blue"), false))
+    DecodeAndMigrate[User].from[A, _1, _3](producerOfAs) shouldBe Some(UserV3("I choose V2!", Some("blue"), false))
   }
 }
