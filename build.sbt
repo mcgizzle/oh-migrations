@@ -2,6 +2,8 @@ import sbt._
 
 name := "my-gr8-library"
 
+organization := "com.github"
+
 version := "0.0.1"
 
 scalaVersion := "2.12.9"

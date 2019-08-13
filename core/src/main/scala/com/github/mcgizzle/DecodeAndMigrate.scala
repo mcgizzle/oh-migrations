@@ -1,17 +1,7 @@
-package mcgizzle
+package com.github.mcgizzle
 
 import cats.implicits._
 import shapeless.{Lazy, Nat, Succ}
-
-trait Decoder[A, B] {
-  def decode(in: A): Option[B]
-}
-object Decoder {
-  def from[A, B](f: A => Option[B]): Decoder[A, B] =
-    new Decoder[A, B] {
-      def decode(in: A): Option[B] = f(in)
-    }
-}
 
 class DecodeAndMigrate[Origin] {
   def from[A, Start <: Nat, Target <: Nat](a: A)(implicit ev: DecodeAndMigrateBuilder[Origin, A, Start, Target]): Option[ev.Out] = ev.decodeAndMigrate(a)

@@ -1,5 +1,4 @@
-package mcgizzle
-
+package com.github.mcgizzle
 
 trait MigrationFunction[Data1, Data2] {
   def apply(d: Data1): Data2
