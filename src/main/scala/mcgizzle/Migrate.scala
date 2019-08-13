@@ -1,3 +1,5 @@
+package mcgizzle
+
 import shapeless.{Lazy, Nat, Succ}
 
 class Migrate[Origin] {
@@ -16,8 +18,6 @@ trait MigrationBuilder[Origin, Start <: Nat, End <: Nat] {
   type Data2
 
   def migrate(d: Data1): Data2
-  def migrateOption(d: Option[Data1]): Option[Data2] = d.map(migrate(_))
-
 }
 
 object MigrationBuilder {

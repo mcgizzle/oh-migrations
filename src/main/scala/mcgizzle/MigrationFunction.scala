@@ -1,7 +1,8 @@
+package mcgizzle
+
 
 trait MigrationFunction[Data1, Data2] {
   def apply(d: Data1): Data2
-  def maybeMigrate(d: Option[Data1]): Option[Data2] = d.map(apply(_))
 }
 
 object MigrationFunction {

@@ -1,5 +1,7 @@
-import shapeless.{=:!=, Lazy, Nat, Succ}
+package mcgizzle
+
 import cats.implicits._
+import shapeless.{Lazy, Nat, Succ}
 
 trait Decoder[A, B] {
   def decode(in: A): Option[B]
@@ -40,7 +42,7 @@ object DecodeAndMigrateBuilder  {
   ): DecodeAndMigrateBuilder.Aux[Origin, A, N, Target, DTarget] =
     new DecodeAndMigrateBuilder[Origin, A, N, Target] {
       type Out = DTarget
-      def decodeAndMigrate(a: A): Option[DTarget] = r.value.decodeAndMigrate(a) <+> m.migrateOption(ev.decode(a))
+      def decodeAndMigrate(a: A): Option[DTarget] = r.value.decodeAndMigrate(a) <+> ev.decode(a).map(m.migrate)
     }
 
   implicit def base[Origin, A, N <: Nat, DN]

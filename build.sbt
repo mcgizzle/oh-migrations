@@ -1,8 +1,8 @@
-name := "mygr8"
+name := "my-gr8-library"
 
-version := "0.1"
+version := "0.0.1"
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.12.9"
 
 libraryDependencies ++= Seq(
   "com.chuusai" %% "shapeless" % "2.3.3",
