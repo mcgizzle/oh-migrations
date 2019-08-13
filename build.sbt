@@ -1,20 +1,13 @@
-import sbt._
-
-name := "my-gr8-library"
-
-organization := "com.github"
-
-version := "0.0.1"
-
-scalaVersion := "2.12.9"
-
 lazy val modules: List[ProjectReference] = List(core, circe)
+
+val projName = "oh-migrations"
+val orgName = "com.github.mcgizzle"
 
 lazy val root = project.in(file("."))
   .settings(
-    name := s"$name",
+    moduleName := projName,
     description := "A data migration library at the type-level",
-    version := s"$version"
+    organization := orgName
   )
   .aggregate(modules: _*)
 
@@ -46,13 +39,15 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-value-discard",
     "-Ypartial-unification",
-    "-Xfuture"))
+    "-Xfuture"),
+  moduleName := projName,
+  organization := orgName)
 
 def mkProject(p: String) =
   Project(p, file(p))
     .settings(commonSettings)
     .settings(
-      moduleName := s"$name-$p",
+      moduleName += s"-$p",
       libraryDependencies ++= Seq(
         "org.typelevel" %% "cats-core" % "2.0.0-RC1",
         "com.chuusai" %% "shapeless" % "2.3.3",
