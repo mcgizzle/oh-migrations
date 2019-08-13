@@ -58,11 +58,7 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
 
     implicit val m2: MigrationFunction[UserV2, UserV3] = MigrationFunction(u2 => UserV3(u2.name, Some("blue"), false))
     implicit val m3: MigrationFunction[UserV3, UserV4] = MigrationFunction(u3 => UserV4(u3.name, FavouriteColour(u3.favouriteColour.getOrElse("Black")), false))
-    implicit val m4: MigrationFunction[UserV4, UserV5] = MigrationFunction(u4 => UserV5(u4.name, u4.favouriteColour, FunLevel(if(u4.isFun){
-      100
-    } else {
-      0
-    })))
+    implicit val m4: MigrationFunction[UserV4, UserV5] = MigrationFunction(u4 => UserV5(u4.name, u4.favouriteColour, FunLevel(if (u4.isFun) 100 else 0)))
     implicit val m5: MigrationFunction[UserV5, UserV6] = MigrationFunction(u5 => UserV6(Name(u5.name), u5.favouriteColour, u5.isFun))
 
     implicit val d1: Decoder[A, UserV1] = Decoder.from(_ => Some(UserV1("User1")))
