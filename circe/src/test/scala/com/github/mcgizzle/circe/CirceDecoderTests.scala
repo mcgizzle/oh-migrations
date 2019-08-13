@@ -1,7 +1,7 @@
-package mcgizzle.circe
+package com.github.mcgizzle.circe
 
 import org.scalatest.{FlatSpec, Matchers}
-import CirceDecoder._
+import com.github.mcgizzle
 import io.circe._
 import shapeless.test.illTyped
 

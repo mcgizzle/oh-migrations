@@ -1,4 +1,4 @@
-package mcgizzle
+package com.github.mcgizzle
 
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.Nat._
@@ -73,19 +73,4 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
     DecodeAndMigrate[User].from[A, _1, _6](producerOfAs) shouldBe Some(UserV6(Name("Willy Wonka"), FavouriteColour("green"), FunLevel(100)))
 
   }
-// Example showing interop with circe
-//  it should "work with circe" in {
-//    import io.circe._
-//    import io.circe.generic.auto._
-//    import io.circe.parser._
-//    import io.circe.syntax._
-//
-//    implicit val d1: mcgizzle.Decoder[Json, UserV1] = mcgizzle.Decoder.from(j => decode[UserV1](j.noSpaces).toOption)
-//    implicit val d2: mcgizzle.Decoder[Json, UserV2] = mcgizzle.Decoder.from(j => decode[UserV2](j.noSpaces).toOption)
-//    implicit val d3: mcgizzle.Decoder[Json, UserV3] = mcgizzle.Decoder.from(j => decode[UserV3](j.noSpaces).toOption)
-//
-//    implicit val m2: MigrationFunction[UserV2, UserV3] = MigrationFunction(u2 => UserV3(u2.name, Some("blue"), false))
-//
-//    DecodeAndMigrate[User].from[Json, _1, _3](UserV3("John Joe", None, false).asJson) shouldBe Some(UserV3("John Joe", None, false))
-//  }
 }
