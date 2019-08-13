@@ -26,15 +26,16 @@ import java.util.UUID
 case class Name(value: String)
 case class UserV3(name: Name, id: UUID)
 
-import shapeless.Nat._
-
 // We must version all our data types in tge chain
 object App {
-
+    
+    import mcgizzle._
+    import shapeless.nat._
+    
     trait User {
-      implicit val v1: Versioned[User, _1] = Versioned[User, _1, UserV1]
-      implicit val v2: Versioned[User, _2] = Versioned[User, _2, UserV2]
-      implicit val v3: Versioned[User, _3] = Versioned[User, _3, UserV3]
+      implicit val v1: Versioned[User, _1] = mcgizzle.Versioned[User, _1, UserV1]
+      implicit val v2: Versioned[User, _2] = mcgizzle.Versioned[User, _2, UserV2]
+      implicit val v3: Versioned[User, _3] = mcgizzle.Versioned[User, _3, UserV3]
     }
 
     def dbStuffToGetUUID(user: UserV1): UUID = ???

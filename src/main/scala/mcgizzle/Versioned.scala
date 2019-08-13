@@ -1,4 +1,6 @@
-import shapeless.{Nat, _0}
+package mcgizzle
+
+import shapeless.Nat
 
 trait Versioned[Origin, V <: Nat] {
   type Data

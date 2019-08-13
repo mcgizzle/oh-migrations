@@ -15,14 +15,16 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - deps
+            - deps-{{ checksum "build.sbt" }}
 
       - run: cat /dev/null | sbt test:compile
 
       - save_cache:
           paths:
+            - ~/.ivy2
             - ~/.m2
-          key: deps
+            - ~/.coursier/cache
+          key: deps-{{ checksum "build.sbt" }}
 
       # run tests!
-      - run: cat /dev/null | sbt test:test
+      - run: sbt test

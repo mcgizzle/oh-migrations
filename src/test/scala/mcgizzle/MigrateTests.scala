@@ -1,8 +1,10 @@
+package mcgizzle
+
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.Nat._
 import shapeless.test.illTyped
 
-class MigrationTests extends FlatSpec with Matchers {
+class MigrateTests extends FlatSpec with Matchers {
 
   case class UserV1(name: String, age: Int)
   case class Name(value: String)
@@ -70,7 +72,7 @@ class MigrationTests extends FlatSpec with Matchers {
 
   it should "not work for a non-existent version numbers" in {
 
-    illTyped("""Migrate[Origin].migrate[_0, _3].apply(Adam("hi")) shouldBe Bob("hi")""")
+    illTyped("""mcgizzle.Migrate[Origin].migrate[_0, _3].apply(Adam("hi")) shouldBe Bob("hi")""")
 
   }
 
@@ -81,7 +83,7 @@ class MigrationTests extends FlatSpec with Matchers {
     implicit val V1toV2: MigrationFunction[UserV1, UserV2] = MigrationFunction(a => UserV2(Name(a.name), a.age))
     implicit val V2toV3: MigrationFunction[UserV2, UserV3] = MigrationFunction(a => UserV3(a.name, Age(a.age)))
 
-    illTyped("""Migrate[Dog].from[_0, _2].apply(Adam("hi")) shouldBe Bob("hi")""", "could not find implicit value for parameter m.*")
+    illTyped("""mcgizzle.Migrate[Dog].from[_0, _2].apply(Adam("hi")) shouldBe Bob("hi")""", "could not find implicit value for parameter m.*")
 
   }
 
@@ -89,7 +91,7 @@ class MigrationTests extends FlatSpec with Matchers {
     implicit val V1toV2: MigrationFunction[UserV1, UserV2] = MigrationFunction(a => UserV2(Name(a.name), a.age))
     implicit val V2toV3: MigrationFunction[UserV2, UserV3] = MigrationFunction(a => UserV3(a.name, Age(a.age)))
 
-    illTyped("""Migrate[User].from[_2, _1].apply(UserV2(Name(""), 4))""", "could not find implicit value for parameter m.*")
+    illTyped("""mcgizzle.Migrate[User].from[_2, _1].apply(UserV2(Name(""), 4))""", "could not find implicit value for parameter m.*")
   }
 
 }
