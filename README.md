@@ -63,10 +63,11 @@ object App {
 
     // This functionality can be easily interoped with Circe using my-g8-library-circe
     
+    import io.circe._
+    import io.circe.generic.auto._
     import mcgizzle.circe._
     
-    DecodeAndMigrate[User].from[Json, _1, _3](...Some actual json) shouldBe Some(UserV3(Name("Decoded By UserV2")))
-
+    DecodeAndMigrate[User].from[Json, _1, _3](UserV2(FirstName("Decoded"), LastName("By Circe")).asJson) shouldBe Some(UserV3(Name("Decoded By Circe")))
 
 }
 ```
