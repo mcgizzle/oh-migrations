@@ -1,3 +1,3 @@
-package com.github.mcgizzle
+package io.github.mcgizzle
 
 package object circe extends CirceDecoder

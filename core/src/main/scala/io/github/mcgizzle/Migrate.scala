@@ -1,4 +1,4 @@
-package com.github.mcgizzle
+package io.github.mcgizzle
 
 import shapeless.{Nat, Succ}
 
