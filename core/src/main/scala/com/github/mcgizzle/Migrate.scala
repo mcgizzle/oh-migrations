@@ -1,6 +1,6 @@
 package com.github.mcgizzle
 
-import shapeless.{Lazy, Nat, Succ}
+import shapeless.{Nat, Succ}
 
 class Migrate[Origin] {
 
@@ -27,19 +27,20 @@ object MigrationBuilder {
     type Data2 = D2
   }
 
-  implicit def recurse[Origin, Start <: Nat, End <: Nat, DStart, DNext, DEnd]
+  implicit def recurse[Origin, Start <: Nat, N <: Nat, DStart, DN, DEnd]
   (implicit
    v1: Versioned.Aux[Origin, Start, DStart],
-   v2: Versioned.Aux[Origin, Succ[Start], DNext],
-   v3: Versioned.Aux[Origin, End, DEnd],
-   f: MigrationFunction[DStart, DNext],
-   r: Lazy[MigrationBuilder.Aux[Origin, Succ[Start], End, DNext, DEnd]],
-  ): MigrationBuilder.Aux[Origin, Start, End, DStart, DEnd] = new MigrationBuilder[Origin, Start, End] {
+   v2: Versioned.Aux[Origin, Succ[N], DEnd],
+   v3: Versioned.Aux[Origin, N, DN],
+   f: MigrationFunction[DN, DEnd],
+   r: MigrationBuilder.Aux[Origin, Start, N, DStart, DN],
+  ): MigrationBuilder.Aux[Origin, Start, Succ[N], DStart, DEnd] = new MigrationBuilder[Origin, Start, Succ[N]] {
     type Data1 = DStart
     type Data2 = DEnd
 
-    def migrate(d: DStart): Data2 = r.value.migrate(f.apply(d))
+    def migrate(d: DStart): DEnd = f(r.migrate(d))
   }
+
   implicit def base[Origin, V <: Nat, D, DNext]
   (implicit
    v: Versioned.Aux[Origin, V, D],
