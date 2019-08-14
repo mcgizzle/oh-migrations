@@ -1,4 +1,4 @@
-package com.github.mcgizzle
+package io.github.mcgizzle
 
 trait Decoder[A, B] {
   def decode(in: A): Option[B]
