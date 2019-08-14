@@ -1,8 +1,8 @@
-# my-gr8-library
+# oh-migrations
 
 Data migrations through implicit function composition at the type-level.
 
-This library provides the ability to version and migrate ADT's.
+This library provides the ability to version, decode and migrate ADT's.
 
 ## Example
 
@@ -25,7 +25,7 @@ import java.util.UUID
 case class Name(value: String)
 case class UserV3(name: Name, id: UUID)
 
-// We must version all our data types in tge chain
+// We must version all our data types in the chain
 object App {
     
     import shapeless.nat._
@@ -50,22 +50,23 @@ object App {
     val u1 = UserV1("Frederick", "Wiley")
     Migrate[User].from[_1, _3].apply(u1) == UserV3(Name("Frederick Wiley"), dbStuffToGetUUID(u1))
 
-    // Even more interesting is the DecodeAndMigrate typeclass which provides the ability
+    // Even more interesting is the DecodeAndMigrate type-class which provides the ability
     // to attempt to decode our User from the latest version and then migrate it to our
     // desired version
     
-    implicit val d1: mcgizzle.Decoder[String, UserV1] = Decoder.from(_ => None)   
-    implicit val d2: mcgizzle.Decoder[String, UserV2] = Decoder.from(_ => Some(UserV2(FirstName("Decoded"), LastName("By UserV2"))))   
-    implicit val d3: mcgizzle.Decoder[String, UserV3] = Decoder.from(_ => None)   
+    // We provide Decoders for each version of User
+    implicit val d1: Decoder[String, UserV1] = Decoder.from(_ => None)   
+    implicit val d2: Decoder[String, UserV2] = Decoder.from(_ => Some(UserV2(FirstName("Decoded"), LastName("By UserV2"))))   
+    implicit val d3: Decoder[String, UserV3] = Decoder.from(_ => None)   
 
     // It decodes a UserV2 as it is the latest available and then migrates it to UserV3
     DecodeAndMigrate[User].from[String, _1, _3]("{ json value for example}") shouldBe Some(UserV3(Name("Decoded By UserV2")))
 
-    // This functionality can be easily interoped with Circe using my-g8-library-circe
+    // This functionality can be easily interoped with Circe using oh-migrations-circe
     
     import io.circe._
     import io.circe.generic.auto._
-    import mcgizzle.circe._
+    import com.github.mcgizzle.circe._
     
     DecodeAndMigrate[User].from[Json, _1, _3](UserV2(FirstName("Decoded"), LastName("By Circe")).asJson) shouldBe Some(UserV3(Name("Decoded By Circe")))
 
