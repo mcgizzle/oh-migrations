@@ -1,9 +1,9 @@
 lazy val modules: List[ProjectReference] = List(core, circe)
 
-resolvers ++= Seq (
+resolvers ++= Seq(
   "Maven Central Server" at "http://repo1.maven.org/maven2",
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/",
-  "Sonatype OSS Releases"  at "http://oss.sonatype.org/content/repositories/releases/",
+  "Sonatype OSS Releases" at "http://oss.sonatype.org/content/repositories/releases/",
   "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
 )
 
@@ -34,6 +34,8 @@ lazy val circe = mkProject("circe")
     ).map(_ % circeVersion)
   ).dependsOn(core)
 
+import xerial.sbt.Sonatype._
+
 lazy val commonSettings = Seq(
   Compile / scalacOptions ++= Seq(
     "-deprecation",
@@ -48,9 +50,19 @@ lazy val commonSettings = Seq(
     "-Ypartial-unification",
     "-Xfuture"),
   moduleName := projName,
-  organization := orgName)
+  organization := orgName,
+  sonatypeProfileName := "io.github.mcgizzle",
+  sonatypeProjectHosting := Some(GitHubHosting("mcgizzle", "oh-migrations", "mcgroas@tcd.ie")),
+  developers := List(
+    Developer(id = "mcgizzle", name = "Sean McGroarty", email = "mcgroas@tcd.ie", url = url("https://github.com/mcgizzle"))
+  ),
+  licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")))
 
-import ReleaseTransformations._
+
+ThisBuild / publishMavenStyle := true
+
+
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
 releaseCrossBuild := true // true if you cross-build the project for multiple Scala versions
 releaseProcess := Seq[ReleaseStep](
