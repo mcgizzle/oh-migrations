@@ -4,6 +4,16 @@ Data migrations through implicit function composition at the type-level.
 
 This library provides the ability to version, decode and migrate ADT's.
 
+## Install
+
+For core functionality add the following to your `build.sbt`:
+
+`"io.github.mcgizzle" %% "oh-migrations-core" % "0.0.1"`
+
+to interop with [circe](https://github.com/circe/circe) add:
+
+`"io.github.mcgizzle" %% "oh-migrations-circe" % "0.0.1"`
+
 ## Example
 
 
@@ -62,7 +72,7 @@ object App {
     // It decodes a UserV2 as it is the latest available and then migrates it to UserV3
     DecodeAndMigrate[User].from[String, _1, _3]("{ json value for example}") shouldBe Some(UserV3(Name("Decoded By UserV2")))
 
-    // This functionality can be easily interoped with Circe using oh-migrations-circe
+    // This functionality can be easily interoped with circe using oh-migrations-circe
     
     import io.circe._
     import io.circe.generic.auto._
