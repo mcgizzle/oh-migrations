@@ -1,6 +1,5 @@
 package io.github.mcgizzle
 
-import io.github.mcgizzle.MigrationFunction.+=>
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.Nat._
 import shapeless.test.illTyped
@@ -23,8 +22,8 @@ class MigrateTests extends FlatSpec with Matchers {
 
   "Migrating based on versions" should "work for a short chain" in {
 
-    implicit val V1toV2: MigrationFunction[UserV1, UserV2] = MigrationFunction(a => UserV2(Name(a.name), a.age))
-    implicit val V2toV3: MigrationFunction[UserV2, UserV3] = MigrationFunction(a => UserV3(a.name, Age(a.age)))
+    implicit val V1toV2: UserV1 +=> UserV2 = MigrationFunction(a => UserV2(Name(a.name), a.age))
+    implicit val V2toV3: UserV2 +=> UserV3 = MigrationFunction(a => UserV3(a.name, Age(a.age)))
 
     Migrate[User].from[_1, _2].apply(UserV1("John", 7)) shouldBe UserV2(Name("John"), 7)
     Migrate[User].from[_1, _3].apply(UserV1("John", 7)) shouldBe UserV3(Name("John"), Age(7))

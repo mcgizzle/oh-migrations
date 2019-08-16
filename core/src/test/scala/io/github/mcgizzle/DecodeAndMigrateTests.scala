@@ -1,6 +1,5 @@
 package io.github.mcgizzle
 
-import io.github.mcgizzle.MigrationFunction.+=>
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.Nat._
 
