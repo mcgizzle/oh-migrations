@@ -4,7 +4,7 @@ import cats.Id
 import cats.implicits._
 import shapeless.{Lazy, Nat, Succ}
 
-class DecodeAndMigrate[Origin] {
+final class DecodeAndMigrate[Origin] {
   def from[A, Start <: Nat, Target <: Nat](a: A)(implicit ev: DecodeAndMigrateBuilder[Origin, A, Start, Target]): Option[ev.Out] = ev.decodeAndMigrate(a)
 }
 
@@ -12,7 +12,7 @@ object DecodeAndMigrate {
   def apply[Origin]: DecodeAndMigrate[Origin] = new DecodeAndMigrate[Origin]
 }
 
-trait DecodeAndMigrateBuilder[Origin, A, Start <: Nat, Target <: Nat] {
+sealed trait DecodeAndMigrateBuilder[Origin, A, Start <: Nat, Target <: Nat] {
 
   type Out
 

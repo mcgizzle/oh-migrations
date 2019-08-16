@@ -1,6 +1,6 @@
 package io.github.mcgizzle
 
-trait Decoder[A, B] {
+sealed trait Decoder[A, B] {
   def decode(in: A): Option[B]
 }
 object Decoder {
