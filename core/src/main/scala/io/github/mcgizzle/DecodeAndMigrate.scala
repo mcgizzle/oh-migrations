@@ -1,5 +1,6 @@
 package io.github.mcgizzle
 
+import cats.Id
 import cats.implicits._
 import shapeless.{Lazy, Nat, Succ}
 
@@ -27,7 +28,7 @@ object DecodeAndMigrateBuilder  {
   (implicit
    v: Versioned.Aux[Origin, N, D],
    ev: Decoder[A, D],
-   m: MigrationBuilder.Aux[Origin, N, Target, D, DTarget],
+   m: MigrationBuilder.Aux[Id, Origin, N, Target, D, DTarget],
    r: Lazy[DecodeAndMigrateBuilder.Aux[Origin, A, Succ[N], Target, DTarget]],
   ): DecodeAndMigrateBuilder.Aux[Origin, A, N, Target, DTarget] =
     new DecodeAndMigrateBuilder[Origin, A, N, Target] {
