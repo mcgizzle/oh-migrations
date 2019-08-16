@@ -11,6 +11,10 @@ final class DecodeAndMigrate[F[_], Origin] {
 object DecodeAndMigrate {
   def apply[Origin]: DecodeAndMigrate[Id, Origin] = new DecodeAndMigrate[Id, Origin]
 }
+object DecodeAndMigrateF {
+  def apply[F[_], Origin]: DecodeAndMigrate[F, Origin] = new DecodeAndMigrate[F, Origin]
+}
+
 
 sealed trait DecodeAndMigrateBuilder[F[_], Origin, A, Start <: Nat, Target <: Nat] {
 
