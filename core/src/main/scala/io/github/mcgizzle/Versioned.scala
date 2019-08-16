@@ -2,7 +2,7 @@ package io.github.mcgizzle
 
 import shapeless.Nat
 
-trait Versioned[Origin, V <: Nat] {
+sealed trait Versioned[Origin, V <: Nat] {
   type Data
 }
 
