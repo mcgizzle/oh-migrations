@@ -1,5 +1,6 @@
 package io.github.mcgizzle
 
+import io.github.mcgizzle.MigrationFunction.+=>
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.Nat._
 
@@ -29,7 +30,7 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
     implicit val v6 = Versioned[User, _6, UserV6]
   }
 
-  implicit val m1: MigrationFunction[UserV1, UserV2] = MigrationFunction(u1 => UserV2(u1.name, None))
+  implicit val m1: UserV1 +=> UserV2 = MigrationFunction(u1 => UserV2(u1.name, None))
 
   "mcgizzle.DecodeAndMigrate" should "choose the latest decoder" in {
 
@@ -48,7 +49,7 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
   }
   it should "choose latest and then migrate" in {
 
-    implicit val m2: MigrationFunction[UserV2, UserV3] = MigrationFunction(u2 => UserV3(u2.name, Some("blue"), false))
+    implicit val m2: UserV2 +=> UserV3 = MigrationFunction(u2 => UserV3(u2.name, Some("blue"), false))
 
     implicit val d1: Decoder[A, UserV1] = Decoder.from(_ => Some(UserV1("User1")))
     implicit val d2: Decoder[A, UserV2] = Decoder.from(_ => Some(UserV2("I choose V2!", None)))
@@ -58,10 +59,10 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
   }
   it should "work for a long chain" in {
 
-    implicit val m2: MigrationFunction[UserV2, UserV3] = MigrationFunction(u2 => UserV3(u2.name, Some("blue"), false))
-    implicit val m3: MigrationFunction[UserV3, UserV4] = MigrationFunction(u3 => UserV4(u3.name, FavouriteColour(u3.favouriteColour.getOrElse("Black")), false))
-    implicit val m4: MigrationFunction[UserV4, UserV5] = MigrationFunction(u4 => UserV5(u4.name, u4.favouriteColour, FunLevel(if (u4.isFun) 100 else 0)))
-    implicit val m5: MigrationFunction[UserV5, UserV6] = MigrationFunction(u5 => UserV6(Name(u5.name), u5.favouriteColour, u5.isFun))
+    implicit val m2: UserV2 +=> UserV3 = MigrationFunction(u2 => UserV3(u2.name, Some("blue"), false))
+    implicit val m3: UserV3 +=> UserV4 = MigrationFunction(u3 => UserV4(u3.name, FavouriteColour(u3.favouriteColour.getOrElse("Black")), false))
+    implicit val m4: UserV4 +=> UserV5 = MigrationFunction(u4 => UserV5(u4.name, u4.favouriteColour, FunLevel(if (u4.isFun) 100 else 0)))
+    implicit val m5: UserV5 +=> UserV6 = MigrationFunction(u5 => UserV6(Name(u5.name), u5.favouriteColour, u5.isFun))
 
     implicit val d1: Decoder[A, UserV1] = Decoder.from(_ => Some(UserV1("User1")))
     implicit val d2: Decoder[A, UserV2] = Decoder.from(_ => Some(UserV2("I choose V2!", None)))
