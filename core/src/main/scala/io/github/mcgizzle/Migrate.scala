@@ -4,7 +4,7 @@ import cats.{FlatMap, Id}
 import cats.data.Kleisli
 import shapeless.{Nat, Succ}
 
-class Migrate[F[_], Origin] {
+final class Migrate[F[_], Origin] {
 
   def from[Start <: Nat, End <: Nat](implicit m: MigrationBuilder[F, Origin, Start, End]): m.Data1 => F[m.Data2] = m.migrate(_)
 
@@ -14,7 +14,7 @@ object Migrate {
   def apply[Origin]: Migrate[Id, Origin] = new Migrate[Id, Origin]
 }
 
-trait MigrationBuilder[F[_], Origin, Start <: Nat, End <: Nat] {
+sealed trait MigrationBuilder[F[_], Origin, Start <: Nat, End <: Nat] {
 
   type Data1
   type Data2
