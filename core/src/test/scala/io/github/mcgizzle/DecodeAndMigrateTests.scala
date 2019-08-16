@@ -1,5 +1,7 @@
 package io.github.mcgizzle
 
+import cats.data.Kleisli
+import cats.{Applicative, Functor, Monad}
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.Nat._
 
@@ -71,6 +73,45 @@ class DecodeAndMigrateTests extends FlatSpec with Matchers {
     implicit val d6: Decoder[A, UserV6] = Decoder.from(_ => None)
 
     DecodeAndMigrate[User].from[A, _1, _6](producerOfAs) shouldBe Some(UserV6(Name("Willy Wonka"), FavouriteColour("green"), FunLevel(100)))
+
+  }
+  "DecodeAndMigrateF" should "parse effectful migrations for any arbritrary effect" in {
+
+    case class Effect[A](run: A)
+
+    var effectApplied = false
+
+    implicit def functor: Functor[Effect] = new Functor[Effect] {
+      def map[A, B](fa: Effect[A])(f: A => B): Effect[B] = Effect(f(fa.run))
+    }
+
+    implicit def applicative: Applicative[Effect] = new Applicative[Effect] {
+      def pure[A](x: A): Effect[A] = Effect(x)
+
+      def ap[A, B](ff: Effect[A => B])(fa: Effect[A]): Effect[B] = Effect(ff.run(fa.run))
+    }
+
+    implicit def monad: Monad[Effect] = new Monad[Effect] {
+      def pure[A](x: A): Effect[A] = applicative.pure(x)
+
+      def flatMap[A, B](fa: Effect[A])(f: A => Effect[B]): Effect[B] = {
+        effectApplied = true
+        f(fa.run)
+      }
+
+      def tailRecM[A, B](a: A)(f: A => Effect[Either[A, B]]): Effect[B] = ???
+    }
+
+    implicit val m1 = MigrationFunctionF[Effect].from{ u1: UserV1 => Effect(UserV2(u1.name, None))}
+    implicit val m2 = MigrationFunctionF[Effect].from{ u2: UserV2 => Effect(UserV3(u2.name, u2.favouriteColour, true))}
+
+    implicit val d1: Decoder[String, UserV1] = Decoder.from(_ => Some(UserV1("User1")))
+    implicit val d2: Decoder[String, UserV2] = Decoder.from(_ => Some(UserV2("I choose V2!", None)))
+    implicit val d3: Decoder[String, UserV3] = Decoder.from(_ => None)
+
+    monad.flatMap(Effect(""))(s => DecodeAndMigrateF[Effect, User].from[String, _1, _3](s)).run shouldBe Some(UserV3("I choose V2!", None, true))
+
+    effectApplied shouldBe true
 
   }
 }
