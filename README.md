@@ -95,7 +95,7 @@ This functionality can be easily interoped with circe using `oh-migrations-circe
 ```scala
 import io.circe._
 import io.circe.generic.auto._
-import com.github.mcgizzle.circe._
+import io.github.mcgizzle.circe._
 
 val json = UserV2(FirstName("Decoded"), LastName("By Circe")).asJson)
 DecodeAndMigrate[User].from[Json, _1, _3](json) shouldBe Some(UserV3(Name("Decoded By Circe")))
