@@ -14,7 +14,7 @@ to interop with [circe](https://github.com/circe/circe) add:
 
 `"io.github.mcgizzle" %% "oh-migrations-circe" % "<version>"`
 
-versions can be found in the (releases)[https://github.com/mcgizzle/oh-migrations/releases] section.
+versions can be found in the [releases](https://github.com/mcgizzle/oh-migrations/releases) section.
 
 ## Example
 Lets say you have a stringly typed User data type.
