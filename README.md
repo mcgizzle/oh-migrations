@@ -1,5 +1,9 @@
 # oh-migrations
 
+[![CircleCI](https://circleci.com/gh/mcgizzle/oh-migrations.svg?style=svg)](https://circleci.com/gh/mcgizzle/oh-migrations)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/mcgizzle/oh-migrations)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Data migrations through implicit function composition at the type-level.
 
 This library provides the ability to version, decode and migrate ADT's.
