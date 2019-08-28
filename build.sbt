@@ -37,6 +37,9 @@ lazy val circe = mkProject("circe")
 import xerial.sbt.Sonatype._
 
 lazy val commonSettings = Seq(
+  scalaVersion := "2.12.9",
+  moduleName := projName,
+  organization := orgName,
   Compile / scalacOptions ++= Seq(
     "-deprecation",
     "-encoding", "UTF-8",
@@ -49,8 +52,6 @@ lazy val commonSettings = Seq(
     "-Ywarn-value-discard",
     "-Ypartial-unification",
     "-Xfuture"),
-  moduleName := projName,
-  organization := orgName,
   sonatypeProfileName := "io.github.mcgizzle",
   sonatypeProjectHosting := Some(GitHubHosting("mcgizzle", "oh-migrations", "mcgroas@tcd.ie")),
   developers := List(
@@ -58,9 +59,7 @@ lazy val commonSettings = Seq(
   ),
   licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")))
 
-
 ThisBuild / publishMavenStyle := true
-
 
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
