@@ -1,8 +1,11 @@
 # oh-migrations
 
 [![CircleCI](https://circleci.com/gh/mcgizzle/oh-migrations.svg?style=svg)](https://circleci.com/gh/mcgizzle/oh-migrations)
+![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/io.github.mcgizzle/oh-migrations-core_2.12?server=https%3A%2F%2Foss.sonatype.org%2F)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/mcgizzle/oh-migrations)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+
 
 Data migrations through implicit function composition at the type-level.
 
