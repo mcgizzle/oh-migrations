@@ -1,14 +1,14 @@
 # oh-migrations
 
 [![CircleCI](https://circleci.com/gh/mcgizzle/oh-migrations.svg?style=svg)](https://circleci.com/gh/mcgizzle/oh-migrations)
-![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/io.github.mcgizzle/oh-migrations-core_2.12?server=https%3A%2F%2Foss.sonatype.org%2F)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.mcgizzle/oh-migrations-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.mcgizzle/oh-migrations-core_2.12)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
 
 Data migrations through implicit function composition at the type-level.
 
-This library provides the ability to version, decode and migrate ADT's.
+This library provides the ability to version, decode and migrate data types.
 
 ## Install
 
@@ -22,7 +22,7 @@ to interop with [circe](https://github.com/circe/circe) add:
 
 versions can be found in the [releases](https://github.com/mcgizzle/oh-migrations/releases) section.
 
-## Example
+## Usage
 Lets say you have a stringly typed User data type.
 ```scala
 case class UserV1(firstName: String, lastName: String)
