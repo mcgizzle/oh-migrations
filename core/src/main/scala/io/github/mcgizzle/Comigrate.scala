@@ -3,7 +3,7 @@ package io.github.mcgizzle
 import cats.{FlatMap, Id}
 import cats.data.Kleisli
 import io.github.mcgizzle
-import shapeless.{Nat, Succ}
+import shapeless.{Lazy, Nat, Succ}
 
 final class Comigrate[F[_], Origin] {
 
@@ -33,18 +33,18 @@ object ComigrationBuilder {
     type Data2 = D2
   }
 
-  implicit def recurse[F[_]: FlatMap, Origin, Start <: Nat, N <: Nat, DStart, DPrev, DEnd]
+  implicit def recurse[F[_]: FlatMap, Origin, Low <: Nat, High <: Nat, DLow, DSuccLow, DHigh]
   (implicit
-   v1: Versioned.Aux[Origin, Start, DStart],
-   v2: Versioned.Aux[Origin, Succ[N], DEnd],
-   v3: Versioned.Aux[Origin, N, DPrev],
-   f: Kleisli[F, DPrev, DEnd],
-   r: ComigrationBuilder.Aux[F, Origin, Start, N, DStart, DPrev]
-  ): MigrationBuilder.Aux[F, Origin, Start, Succ[N], DStart, DEnd] = new ComigrationBuilder[F, Origin, Start, Succ[N]] {
-    type Data1 = DStart
-    type Data2 = DEnd
+   v1: Versioned.Aux[Origin, Low, DLow],
+   v2: Versioned.Aux[Origin, Succ[Low], DSuccLow],
+   v3: Versioned.Aux[Origin, High, DHigh],
+   f: Kleisli[F, DSuccLow, DLow],
+   r: Lazy[ComigrationBuilder.Aux[F, Origin, High, Succ[Low], DHigh, DSuccLow]]
+  ): ComigrationBuilder.Aux[F, Origin, High, Low, DHigh, DLow] = new ComigrationBuilder[F, Origin, High, Low] {
+    type Data1 = DHigh
+    type Data2 = DLow
 
-    def migrate(d: DStart): F[DEnd] = r.migrate(d).flatMap(f.run)
+    def migrate(d: DHigh): F[DLow] = r.value.migrate(d).flatMap(f.run)
   }
 
   implicit def base[F[_], Origin, V <: Nat, D, DPrev]
