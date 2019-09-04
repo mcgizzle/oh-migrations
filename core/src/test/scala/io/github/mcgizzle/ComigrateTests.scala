@@ -26,11 +26,8 @@ class ComigrateTests extends FlatSpec with Matchers {
     implicit val V1toV2: UserV2 +=> UserV1 = MigrationFunction(a => UserV1(a.name.value, a.age))
     implicit val V2toV3: UserV3 +=> UserV2 = MigrationFunction(a => UserV2(a.name, a.age.value))
 
-    implicit  val x: Versioned.Aux[User, _1, UserV1] = Versioned[User, _1, UserV1]
-    val x = ComigrationBuilder.base[Id, User, _1, UserV2, UserV1]
-
     Comigrate[User].from[_2, _1].apply(UserV2(Name("John"), 7)) shouldBe UserV1("John", 7)
-    Comigrate[User].from[_3, _1].apply(UserV1("John", 7)) shouldBe UserV3(Name("John"), Age(7))
+    Comigrate[User].from[_3, _1].apply(UserV3(Name("John"),Age( 7))) shouldBe UserV3(Name("John"), Age(7))
 
   }
 
@@ -59,24 +56,21 @@ class ComigrateTests extends FlatSpec with Matchers {
       implicit val version8: Versioned.Aux[User_, _8, UserV8] = Versioned[User_, _8, UserV8]
     }
 
-    implicit val V1toV2: UserV1 +=> UserV2 = MigrationFunction(a => UserV2(Name(a.name), a.age))
-    implicit val V2toV3: UserV2 +=> UserV3 = MigrationFunction(a => UserV3(a.name, Age(a.age)))
-    implicit val V3toV4: UserV3 +=> UserV4 = MigrationFunction(a => UserV4(a.name, a.age, None))
-    implicit val V4toV5: UserV4 +=> UserV5 = MigrationFunction(a => UserV5(a.name, a.age, None, None))
-    implicit val V5toV6: UserV5 +=> UserV6 = MigrationFunction{ a =>
-      val split = a.name.value.split(" ")
-      UserV6(FirstName(split.head), LastName(split.last), a.age, None, None)
-    }
-    implicit val V6toV7: UserV6 +=> UserV7 = MigrationFunction( a => UserV7(a.firstName, a.lastName, a.age, a.email, Address(a.address)))
-    implicit val V7toV8: UserV7 +=> UserV8 = MigrationFunction( a => UserV8(a.firstName, a.lastName, a.age, ContactInfo(a.email, a.address)))
+    implicit val V1toV2: UserV2 +=> UserV1 = MigrationFunction(a => UserV1(a.name.value, a.age))
+    implicit val V2toV3: UserV3 +=> UserV2 = MigrationFunction(a => UserV2(a.name, a.age.value))
+    implicit val V3toV4: UserV4 +=> UserV3 = MigrationFunction(a => UserV3(a.name, a.age))
+    implicit val V4toV5: UserV5 +=> UserV4 = MigrationFunction(a => UserV4(a.name, a.age, None))
+    implicit val V5toV6: UserV6 +=> UserV5 = MigrationFunction(a => UserV5(Name(a.firstName.value + " " + a.lastName.value), a.age, None, None))
+    implicit val V6toV7: UserV7 +=> UserV6 = MigrationFunction(a => UserV6(a.firstName, a.lastName, a.age, a.email, a.address.value))
+    implicit val V7toV8: UserV8 +=> UserV7 =
+      MigrationFunction(a => UserV7(a.firstName, a.lastName, a.age, a.contactInfo.email, a.contactInfo.address))
 
-
-    Migrate[User_].from[_1, _8].apply(UserV1("John Smith", 43)) shouldBe UserV8(FirstName("John"), LastName("Smith"), Age(43), ContactInfo(None, Address(None)))
+    Comigrate[User_].from[_8, _1].apply(UserV8(FirstName("John"), LastName("Smith"), Age(43), ContactInfo(None, Address(None)))) shouldBe UserV1("John Smith", 43)
   }
 
   it should "not work for a non-existent version numbers" in {
 
-    illTyped("""io.github.mcgizzle.Migrate[User].from[_0, _4]""","could not find implicit value for parameter m.*")
+    illTyped("""io.github.mcgizzle.Comigrate[User].from[_0, _4]""","could not find implicit value for parameter m.*")
 
   }
 
@@ -84,18 +78,18 @@ class ComigrateTests extends FlatSpec with Matchers {
 
     trait Dog
 
-    implicit val V1toV2: UserV1 +=> UserV2 = MigrationFunction(a => UserV2(Name(a.name), a.age))
-    implicit val V2toV3: UserV2 +=> UserV3 = MigrationFunction(a => UserV3(a.name, Age(a.age)))
+    implicit val V1toV2: UserV2 +=> UserV1 = MigrationFunction(a => UserV1(a.name.value, a.age))
+    implicit val V2toV3: UserV3 +=> UserV2 = MigrationFunction(a => UserV2(a.name, a.age.value))
 
-    illTyped("""io.github.mcgizzle.Migrate[Dog].from[_0, _2].apply(Adam("hi")) shouldBe Bob("hi")""", "could not find implicit value for parameter m.*")
+    illTyped("""io.github.mcgizzle.Comigrate[Dog].from[_2, _0].apply(Adam("hi")) shouldBe Bob("hi")""", "could not find implicit value for parameter m.*")
 
   }
 
-  it should "fail going back a version" in {
-    implicit val V1toV2: UserV1 +=> UserV2 = MigrationFunction(a => UserV2(Name(a.name), a.age))
-    implicit val V2toV3: UserV2 +=> UserV3 = MigrationFunction(a => UserV3(a.name, Age(a.age)))
+  it should "fail going forward a version" in {
+    implicit val V1toV2: UserV2 +=> UserV1 = MigrationFunction(a => UserV1(a.name.value, a.age))
+    implicit val V2toV3: UserV3 +=> UserV2 = MigrationFunction(a => UserV2(a.name, a.age.value))
 
-    illTyped("""io.github.mcgizzle.Migrate[User].from[_2, _1].apply(UserV2(Name(""), 4))""", "could not find implicit value for parameter m.*")
+    illTyped("""io.github.mcgizzle.Comigrate[User].from[_1, _2].apply(UserV2(Name(""), 4))""", "could not find implicit value for parameter m.*")
   }
 
 }
