@@ -21,13 +21,13 @@ class ComigrateTests extends FlatSpec with Matchers {
     implicit val version3: Versioned.Aux[User, _3, UserV3] = Versioned[User, _3, UserV3]
   }
 
-  "Migrating based on versions" should "work for a short chain" in {
+  "Comigrating based on versions" should "work for a short chain" in {
 
     implicit val V1toV2: UserV2 +=> UserV1 = MigrationFunction(a => UserV1(a.name.value, a.age))
     implicit val V2toV3: UserV3 +=> UserV2 = MigrationFunction(a => UserV2(a.name, a.age.value))
 
     Comigrate[User].from[_2, _1].apply(UserV2(Name("John"), 7)) shouldBe UserV1("John", 7)
-    Comigrate[User].from[_3, _1].apply(UserV3(Name("John"),Age( 7))) shouldBe UserV3(Name("John"), Age(7))
+    Comigrate[User].from[_3, _1].apply(UserV3(Name("John"),Age( 7))) shouldBe UserV1("John", 7)
 
   }
 
