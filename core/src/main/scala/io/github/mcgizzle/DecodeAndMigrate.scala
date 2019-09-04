@@ -1,7 +1,7 @@
 package io.github.mcgizzle
 
-import cats.{Applicative, Id, Monad}
 import cats.implicits._
+import cats.{Applicative, Id}
 import shapeless.{Lazy, Nat, Succ}
 
 final class DecodeAndMigrate[F[_], Origin] {
@@ -28,7 +28,7 @@ object DecodeAndMigrateBuilder  {
 
   type Aux[F[_], Origin, A, Start <: Nat, Target <: Nat, Out0] = DecodeAndMigrateBuilder[F, Origin, A, Start, Target] { type Out = Out0 }
 
-  implicit def recurse[F[_]: Monad, Origin, A, N <: Nat, Target <: Nat, D, DTarget]
+  implicit def recurse[F[_]: Applicative, Origin, A, N <: Nat, Target <: Nat, D, DTarget]
   (implicit
    v: Versioned.Aux[Origin, N, D],
    ev: Decoder[A, D],
@@ -38,10 +38,7 @@ object DecodeAndMigrateBuilder  {
     new DecodeAndMigrateBuilder[F, Origin, A, N, Target] {
       type Out = DTarget
       def decodeAndMigrate(a: A): F[Option[DTarget]] =
-        for {
-          x <- r.value.decodeAndMigrate(a)
-          y <- ev.decode(a).map(m.migrate).sequence
-        } yield x <+> y
+        r.value.decodeAndMigrate(a).product(ev.decode(a).map(m.migrate).sequence).map { case (a, b) => a <+> b }
     }
 
   implicit def base[F[_]:Applicative, Origin, A, N <: Nat, DN]
