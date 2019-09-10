@@ -22,7 +22,7 @@ lazy val core = mkProject("core")
   .settings(
     description := s"Core library for $name")
 
-val circeVersion = "0.11.1"
+val circeVersion = "0.12.0-RC4"
 
 lazy val circe = mkProject("circe")
   .settings(
@@ -37,7 +37,7 @@ lazy val circe = mkProject("circe")
 import xerial.sbt.Sonatype._
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.12.9",
+  scalaVersion := "2.13.0",
   moduleName := projName,
   organization := orgName,
   Compile / scalacOptions ++= Seq(
@@ -47,11 +47,8 @@ lazy val commonSettings = Seq(
     "-language:implicitConversions", "-language:higherKinds", "-language:postfixOps", "-language:reflectiveCalls",
     "-unchecked",
     "-Xfatal-warnings",
-    "-Yno-adapted-args",
     "-Ywarn-dead-code",
-    "-Ywarn-value-discard",
-    "-Ypartial-unification",
-    "-Xfuture"),
+    "-Ywarn-value-discard"),
   sonatypeProfileName := "io.github.mcgizzle",
   sonatypeProjectHosting := Some(GitHubHosting("mcgizzle", "oh-migrations", "mcgroas@tcd.ie")),
   developers := List(
@@ -85,8 +82,8 @@ def mkProject(p: String) =
     .settings(
       moduleName += s"-$p",
       libraryDependencies ++= Seq(
-        "org.typelevel" %% "cats-core" % "2.0.0-RC1",
+        "org.typelevel" %% "cats-core" % "2.0.0",
         "com.chuusai" %% "shapeless" % "2.3.3",
-        "org.scalatest" %% "scalatest" % "3.0.5" % "test"),
+        "org.scalatest" %% "scalatest" % "3.0.8" % "test"),
       publishTo := sonatypePublishTo.value
     )
