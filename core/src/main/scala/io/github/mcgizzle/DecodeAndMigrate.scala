@@ -41,7 +41,7 @@ object DecodeAndMigrateBuilder  {
         r.value.decodeAndMigrate(a).product(ev.decode(a).map(m.migrate).sequence).map { case (a, b) => a <+> b }
     }
 
-  implicit def base[F[_]:Applicative, Origin, A, N <: Nat, DN]
+  implicit def base[F[_]: Applicative, Origin, A, N <: Nat, DN]
   (implicit
    v: Versioned.Aux[Origin, N, DN],
    d: Decoder[A, DN]
