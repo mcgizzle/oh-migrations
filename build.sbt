@@ -14,7 +14,8 @@ lazy val root = project.in(file("."))
   .settings(
     moduleName := projName,
     description := "A data migration library at the type-level",
-    organization := orgName
+    organization := orgName,
+    publishArtifact := false
   )
   .aggregate(modules: _*)
 
