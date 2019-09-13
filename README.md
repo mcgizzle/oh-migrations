@@ -1,7 +1,7 @@
 # oh-migrations
 
 [![CircleCI](https://circleci.com/gh/mcgizzle/oh-migrations.svg?style=shield)](https://circleci.com/gh/mcgizzle/oh-migrations)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.mcgizzle/oh-migrations-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.mcgizzle/oh-migrations-core_2.12)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.mcgizzle/oh-migrations-core_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.mcgizzle/oh-migrations-core_2.13)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
