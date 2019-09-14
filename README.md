@@ -66,7 +66,7 @@ implicit val m2: UserV2 +=> UserV3 = u1 =>
 ```
 
 ### MigrationFunctionF
-Sometimes it may be necessary to migrate your datatypes effectfully.
+Sometimes it may be necessary to migrate our data types effectfully.
 ```scala
 implicit val m1: MigrationFunctionF[F, UserV1, UserV2] = u1 => 
   UserV2(FirstName(u1.firstName), LastName(u1.lastName))
@@ -103,7 +103,7 @@ import io.circe._
 import io.circe.generic.auto._
 import io.github.mcgizzle.circe._
 
-val json = UserV2(FirstName("Decoded"), LastName("By Circe")).asJson)
+val json = UserV2(FirstName("Decoded"), LastName("By Circe")).asJson
 DecodeAndMigrate[User].from[Json, _1, _3](json) shouldBe Some(UserV3(Name("Decoded By Circe")))
 ```
 
