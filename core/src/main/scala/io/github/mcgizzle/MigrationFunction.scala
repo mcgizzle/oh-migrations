@@ -13,4 +13,3 @@ class MigrationFunctionF[F[_]] {
 object MigrationFunctionF {
   def apply[F[_]]: MigrationFunctionF[F] = new MigrationFunctionF()
 }
-
