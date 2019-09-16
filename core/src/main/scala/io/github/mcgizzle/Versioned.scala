@@ -7,8 +7,8 @@ sealed trait Versioned[Origin, V <: Nat] {
 }
 
 object Versioned {
-  type Aux[Origin, V <: Nat, Data0] = Versioned[Origin, V]{ type Data = Data0 }
+  type Aux[Origin, V <: Nat, Data0] = Versioned[Origin, V] { type Data = Data0 }
 
-  def apply[Origin, V <: Nat, D]: Versioned.Aux[Origin, V, D] = new Versioned[Origin, V] {type Data = D}
+  def apply[Origin, V <: Nat, D]: Versioned.Aux[Origin, V, D] = new Versioned[Origin, V] { type Data = D }
 
 }
