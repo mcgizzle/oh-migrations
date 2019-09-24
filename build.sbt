@@ -1,4 +1,4 @@
-lazy val modules: List[ProjectReference] = List(core, circe)
+lazy val modules: List[ProjectReference] = List(core, circe, argonaut)
 
 resolvers ++= Seq(
   "Maven Central Server" at "http://repo1.maven.org/maven2",
@@ -33,6 +33,16 @@ lazy val circe = mkProject("circe")
       "io.circe" %% "circe-generic",
       "io.circe" %% "circe-parser"
     ).map(_ % circeVersion)
+  ).dependsOn(core)
+
+val argonautVersion = "6.2.3"
+
+lazy val argonaut = mkProject("argonaut")
+  .settings(
+    description := s"Argonaut interop for $name",
+    libraryDependencies ++= Seq(
+      "io.argonaut" %% "argonaut" % argonautVersion
+    )
   ).dependsOn(core)
 
 import xerial.sbt.Sonatype._
