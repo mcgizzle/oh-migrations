@@ -1,4 +1,4 @@
-package io.github.mcgizzle.argonaut
+package io.github.mcgizzle.circe
 
 import argonaut.{DecodeJson, Json}
 import io.github.mcgizzle.{DecodeFailure, Decoder}
