@@ -20,6 +20,10 @@ to interop with [circe](https://github.com/circe/circe) add:
 
 `"io.github.mcgizzle" %% "oh-migrations-circe" % "<version>"`
 
+to interop with [Argonaut](http://argonaut.io/) add:
+
+`"io.github.mcgizzle" %% "oh-migrations-argonaut" % "<version>"`
+
 versions can be found in the [releases](https://github.com/mcgizzle/oh-migrations/releases) section.
 
 ## Usage
@@ -96,7 +100,7 @@ implicit val d3: Decoder[String, UserV3] = Decoder.from(_ => Left(DecodeFailure(
 DecodeAndMigrate[User].from[String, _1, _3]("{ json value for example}") shouldBe Right(UserV3(Name("Decoded By UserV2")))
 ```
 
-### Circe 
+### Interop
 This functionality can be easily interoped with circe using `oh-migrations-circe`.
 ```scala
 import io.circe._
