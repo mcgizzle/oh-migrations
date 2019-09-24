@@ -1,4 +1,4 @@
-package io.github.mcgizzle.circe
+package io.github.mcgizzle.argonaut
 
 import io.circe.Json
 import io.github
