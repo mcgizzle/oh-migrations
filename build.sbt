@@ -12,6 +12,7 @@ val orgName = "io.github.mcgizzle"
 
 lazy val root = project.in(file("."))
   .settings(
+    scalaVersion := "2.13.0",
     moduleName := projName,
     description := "A data migration library at the type-level",
     organization := orgName,
