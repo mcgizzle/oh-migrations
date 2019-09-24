@@ -1,11 +1,11 @@
 package io.github.mcgizzle
 
 sealed trait Decoder[A, B] {
-  def decode(in: A): Option[B]
+  def decode(in: A): Either[DecodeFailure, B]
 }
 object Decoder {
-  def from[A, B](f: A => Option[B]): Decoder[A, B] =
+  def from[A, B](f: A => Either[DecodeFailure, B]): Decoder[A, B] =
     new Decoder[A, B] {
-      def decode(in: A): Option[B] = f(in)
+      def decode(in: A): Either[DecodeFailure, B] = f(in)
     }
 }

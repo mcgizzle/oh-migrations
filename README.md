@@ -88,12 +88,12 @@ latest version and then migrate it to our desired version. As long as we have de
 for all our versions, we get the following for free.
 ```scala
 // We provide Decoders for each version of User
-implicit val d1: Decoder[String, UserV1] = Decoder.from(_ => None)   
-implicit val d2: Decoder[String, UserV2] = Decoder.from(_ => Some(UserV2(FirstName("Decoded"), LastName("By UserV2"))))   
-implicit val d3: Decoder[String, UserV3] = Decoder.from(_ => None)   
+implicit val d1: Decoder[String, UserV1] = Decoder.from(_ => Left(DecodeFailure("failed on d1")))   
+implicit val d2: Decoder[String, UserV2] = Decoder.from(_ => Right(UserV2(FirstName("Decoded"), LastName("By UserV2"))))   
+implicit val d3: Decoder[String, UserV3] = Decoder.from(_ => Left(DecodeFailure("failed on d3")))   
 
 // It decodes a UserV2 as it is the latest available and then migrates it to UserV3
-DecodeAndMigrate[User].from[String, _1, _3]("{ json value for example}") shouldBe Some(UserV3(Name("Decoded By UserV2")))
+DecodeAndMigrate[User].from[String, _1, _3]("{ json value for example}") shouldBe Right(UserV3(Name("Decoded By UserV2")))
 ```
 
 ### Circe 
@@ -104,6 +104,6 @@ import io.circe.generic.auto._
 import io.github.mcgizzle.circe._
 
 val json = UserV2(FirstName("Decoded"), LastName("By Circe")).asJson
-DecodeAndMigrate[User].from[Json, _1, _3](json) shouldBe Some(UserV3(Name("Decoded By Circe")))
+DecodeAndMigrate[User].from[Json, _1, _3](json) shouldBe Right(UserV3(Name("Decoded By Circe")))
 ```
 
