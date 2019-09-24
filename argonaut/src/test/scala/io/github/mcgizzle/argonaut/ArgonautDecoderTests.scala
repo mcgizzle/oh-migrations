@@ -1,4 +1,4 @@
-package io.github.mcgizzle.circe
+package io.github.mcgizzle.argonaut
 
 import org.scalatest.{FlatSpec, Matchers}
 import argonaut._
