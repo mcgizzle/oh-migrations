@@ -7,7 +7,7 @@ import shapeless.{Lazy, Nat, Succ}
 final class DecodeAndMigrate[F[_], Origin] {
   def from[A, Start <: Nat, Target <: Nat](a: A)(
       implicit ev: DecodeAndMigrateBuilder[F, Origin, A, Start, Target]
-  ): F[Option[ev.Out]] = ev.decodeAndMigrate(a)
+  ): F[Either[DecodeFailure, ev.Out]] = ev.decodeAndMigrate(a)
 }
 
 object DecodeAndMigrate {
@@ -21,7 +21,7 @@ sealed trait DecodeAndMigrateBuilder[F[_], Origin, A, Start <: Nat, Target <: Na
 
   type Out
 
-  def decodeAndMigrate(a: A): F[Option[Out]]
+  def decodeAndMigrate(a: A): F[Either[DecodeFailure, Out]]
 
 }
 
@@ -40,7 +40,7 @@ object DecodeAndMigrateBuilder {
   ): DecodeAndMigrateBuilder.Aux[F, Origin, A, N, Target, DTarget] =
     new DecodeAndMigrateBuilder[F, Origin, A, N, Target] {
       type Out = DTarget
-      def decodeAndMigrate(a: A): F[Option[DTarget]] =
+      def decodeAndMigrate(a: A): F[Either[DecodeFailure, DTarget]] =
         r.value.decodeAndMigrate(a).product(ev.decode(a).map(m.migrate).sequence).map { case (a, b) => a <+> b }
     }
 
@@ -51,6 +51,6 @@ object DecodeAndMigrateBuilder {
   ): DecodeAndMigrateBuilder.Aux[F, Origin, A, N, N, DN] =
     new DecodeAndMigrateBuilder[F, Origin, A, N, N] {
       type Out = DN
-      def decodeAndMigrate(a: A): F[Option[DN]] = Applicative[F].pure(d.decode(a))
+      def decodeAndMigrate(a: A): F[Either[DecodeFailure, DN]] = Applicative[F].pure(d.decode(a))
     }
 }
