@@ -63,6 +63,7 @@ lazy val commonSettings = Seq(
     "-Ywarn-value-discard"),
   sonatypeProfileName := "io.github.mcgizzle",
   sonatypeProjectHosting := Some(GitHubHosting("mcgizzle", "oh-migrations", "mcgroas@tcd.ie")),
+  publishArtifact := true,
   scalafmtOnCompile := true,
   developers := List(
     Developer(id = "mcgizzle", name = "Sean McGroarty", email = "mcgroas@tcd.ie", url = url("https://github.com/mcgizzle"))
